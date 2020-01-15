@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from modeling_bertabs import BertAbs, build_predictor
 from transformers import BertTokenizer
-from utils_summarization import (
+from utils_dataset import (
     SummarizationDataset,
     build_mask,
     compute_token_type_ids,
@@ -30,6 +30,8 @@ Batch = namedtuple("Batch", ["document_names", "batch_size", "src", "segs", "mas
 def evaluate(args):
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     model = BertAbs.from_pretrained("bertabs-finetuned-cnndm")
+    # model = BertAbs.from_pretrained("bert-base-uncased")
+    
     model.to(args.device)
     model.eval()
 
@@ -209,9 +211,9 @@ def collate(data, tokenizer, block_size, device):
     names = [name for name, _, _ in data]
     summaries = [" ".join(summary_list) for _, _, summary_list in data]
 
-    encoded_text = [encode_for_summarization(story, summary, tokenizer) for _, story, summary in data]
+    encoded_text = [encode_for_summarization(abstract, title, tokenizer) for _, abstract, title in data]
     encoded_stories = torch.tensor(
-        [fit_to_block_size(story, block_size, tokenizer.pad_token_id) for story, _ in encoded_text]
+        [fit_to_block_size(abstract, block_size, tokenizer.pad_token_id) for abstract, _ in encoded_text]
     )
     encoder_token_type_ids = compute_token_type_ids(encoded_stories, tokenizer.cls_token_id)
     encoder_mask = build_mask(encoded_stories, tokenizer.pad_token_id)
