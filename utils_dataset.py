@@ -2,6 +2,7 @@ import os
 
 from torch.utils.data import Dataset
 import pandas as pd
+import torch
 
 class SummarizationDataset(Dataset):
     def __init__(self, path="", prefix="train"):
