@@ -107,7 +107,7 @@ class BertAbs(BertAbsPreTrainedModel):
 
     def forward(
         self, encoder_input_ids, decoder_input_ids, token_type_ids, encoder_attention_mask, decoder_attention_mask,
-    ):
+    ):    
         encoder_output = self.bert(
             input_ids=encoder_input_ids, token_type_ids=token_type_ids, attention_mask=encoder_attention_mask,
         )
